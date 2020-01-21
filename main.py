@@ -1,27 +1,31 @@
 from analysis import buildAvgTemperatureByStation, buildTemperatureByDate, buildWeatherDataOfLastWeeks
 from db_connection import createTabels, openConnection, insertStationValues, closeConnection, insertObservationValues, \
-    getAvgTemperatureByStation, getTemperaturesByDate, getWeatherDataOfLastMonths
+    getTemperaturesByDate, getWeatherDataOfLastMonths, getAvgTemperature
 from parse_csv import parseStations, parseObservations
+from user_interface import get_booleanParameter, get_intParameter, get_dateParameter
 
 
 def main():
-    createDBTabels = True
-    insertValues = True
+    # Handle the user inputs
+    create_db_tabels = get_booleanParameter("Should the initial database model be loaded? ")
+    insert_values = get_booleanParameter("Should values be inserted into the database? ")
+    station = get_intParameter("Please enter a station ID: ")
+    date = get_dateParameter("Please enter a date (in ISO Format): ")
 
     conn = openConnection()
-    if (createDBTabels):
+    if create_db_tabels:
         createTabels(conn)
 
-    if (insertValues):
+    if insert_values:
         station_values = parseStations()
-        observationValues = parseObservations()
+        observation_values = parseObservations()
 
         insertStationValues(conn, station_values)
-        insertObservationValues(conn, observationValues)
+        insertObservationValues(conn, observation_values)
 
-    avg_temperature = getAvgTemperatureByStation(conn, 540, 550)
-    temperature_by_date = getTemperaturesByDate(conn, 789, '2015-08-03')
-    weather_data = getWeatherDataOfLastMonths(conn, 575)
+    avg_temperature = getAvgTemperature(conn)
+    temperature_by_date = getTemperaturesByDate(conn, station, date)
+    weather_data = getWeatherDataOfLastMonths(conn, station)
     buildTemperatureByDate(temperature_by_date)
     buildAvgTemperatureByStation(avg_temperature)
     buildWeatherDataOfLastWeeks(weather_data)

@@ -9,7 +9,9 @@ def openConnection():
 def createTabels(conn):
     c = conn.cursor()
     # Create table
-    c.executescript('''CREATE TABLE IF NOT EXISTS "station" (
+    c.executescript('''DROP TABLE IF EXISTS station;
+    DROP TABLE IF EXISTS observation;
+    CREATE TABLE IF NOT EXISTS "station" (
         "lat"	INTEGER NOT NULL,
         "lon"	INTEGER NOT NULL,
     	"stationID"	INTEGER NOT NULL,
@@ -20,12 +22,12 @@ def createTabels(conn):
     CREATE TABLE IF NOT EXISTS "observation" (
 	"observationID"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	"stationID"	INTEGER NOT NULL,
-    "humidity"	INTEGER NOT NULL,
-	"precipitation"	INTEGER NOT NULL,
-	"pressure"	INTEGER NOT NULL,
-	"temperature"	REAL NOT NULL,
-	"windDirection"	VARCHAR(4) NOT NULL,
-	"windSpeed"	REAL NOT NULL ,
+    "humidity"	INTEGER DEFAULT NULL,
+	"precipitation"	INTEGER DEFAULT NULL,
+	"pressure"	INTEGER DEFAULT NULL,
+	"temperature"	REAL DEFAULT NULL ,
+	"windDirection"	VARCHAR(4) DEFAULT NULL,
+	"windSpeed"	REAL DEFAULT NULL,
 	"time" DATE NOT NULL,
     FOREIGN KEY(stationID) REFERENCES station(stationID)
     UNIQUE(observationID)
@@ -51,7 +53,7 @@ def insertObservationValues(conn, cur_observation_values):
             cur.execute(query, values)
 
 
-def getAvgTemperatureByStation(conn, startStationID, endStationID):
+def getAvgTemperature(conn):
     query = "SELECT avg(temperature), observation.stationID, station.stationName FROM observation INNER JOIN station ON observation.stationID = station.stationID GROUP BY observation.stationID ORDER BY AVG(temperature) ASC"
     with conn:
         cur = conn.cursor()

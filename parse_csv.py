@@ -18,7 +18,7 @@ def parseStations():
         lon = row[8]
         stationID = row[9]
         stationName = row[10]
-        values = (lat, lon, stationID, stationName)
+        values = [lat, lon, stationID, stationName]
         if values not in stations:
             stations.append(values)
     f1.close()
@@ -32,6 +32,7 @@ def parseObservations():
     iterCsv = iter(readCSV)
     next(iterCsv)
 
+
     for row in iterCsv:
         stationID = row[9]
         humidity = row[0]
@@ -39,11 +40,18 @@ def parseObservations():
         pressure = row[2]
         temperature = row[3]
         windDirection = row[4]
-        # TODO: Null if not there
         windSpeed = row[5]
         time = row[6]
-        values = (stationID, humidity, precipitation, pressure, temperature, windDirection, windSpeed, time)
+        values = [stationID, humidity, precipitation, pressure, temperature, windDirection, windSpeed, time]
+        values = checkForErrorsInValues(values)
         if values not in observations:
             observations.append(values)
     f1.close()
     return observations
+
+
+def checkForErrorsInValues(values):
+    for n, i in enumerate(values):
+        if i == '-99' or i == '---':
+            values[n] = None
+    return values
