@@ -1,4 +1,4 @@
-from analysis import buildAvgTemperatureByStation, buildTemperatureByDate, buildWeatherDataOfLastWeeks
+from analysis import buildAvgTemperatureByStation, buildTemperatureByDate, buildAllWeatherData
 from db_connection import createTabels, openConnection, insertStationValues, closeConnection, insertObservationValues, \
     getTemperaturesByDate, getAllWeatherData, getAvgTemperature
 from parse_csv import parseStations, parseObservations
@@ -33,7 +33,7 @@ def main():
     weather_data = getAllWeatherData(conn, station)
     buildTemperatureByDate(temperature_by_date)
     buildAvgTemperatureByStation(avg_temperature)
-    buildWeatherDataOfLastWeeks(weather_data)
+    buildAllWeatherData(weather_data)
     closeConnection(conn)
 
 

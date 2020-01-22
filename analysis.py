@@ -63,7 +63,7 @@ def buildTemperatureByDate(values):
     plt.show()
 
 
-def buildWeatherDataOfLastWeeks(values):
+def buildAllWeatherData(values):
     stationID = values[0][6]
     stationName = values[0][7]
     for value in values:
