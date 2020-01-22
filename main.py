@@ -1,6 +1,6 @@
 from analysis import buildAvgTemperatureByStation, buildTemperatureByDate, buildWeatherDataOfLastWeeks
 from db_connection import createTabels, openConnection, insertStationValues, closeConnection, insertObservationValues, \
-    getTemperaturesByDate, getWeatherDataOfLastMonths, getAvgTemperature
+    getTemperaturesByDate, getAllWeatherData, getAvgTemperature
 from parse_csv import parseStations, parseObservations
 from user_interface import get_booleanParameter, get_intParameter, get_dateParameter
 
@@ -15,17 +15,22 @@ def main():
     conn = openConnection()
     if create_db_tabels:
         createTabels(conn)
+        print('Database schema created...')
 
     if insert_values:
+        print('Parsing the input file...')
         station_values = parseStations()
         observation_values = parseObservations()
+        print('Input file parsed...')
 
+        print('Inserting values into the database...')
         insertStationValues(conn, station_values)
         insertObservationValues(conn, observation_values)
+        print('Values inserted...')
 
     avg_temperature = getAvgTemperature(conn)
     temperature_by_date = getTemperaturesByDate(conn, station, date)
-    weather_data = getWeatherDataOfLastMonths(conn, station)
+    weather_data = getAllWeatherData(conn, station)
     buildTemperatureByDate(temperature_by_date)
     buildAvgTemperatureByStation(avg_temperature)
     buildWeatherDataOfLastWeeks(weather_data)

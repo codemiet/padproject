@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import matplotlib.pyplot as plt;
 
 plt.rcdefaults()
@@ -29,6 +31,10 @@ def buildAvgTemperatureByStation(values):
 
     plt.bar(y_pos, temperature, align='center', alpha=0.5)
     plt.xticks(y_pos, stations)
+    plt.tick_params(
+        axis="x",
+        labelrotation=-60
+    )
     plt.title('Two lowest and highest average temperatures measuered by stations')
     plt.ylabel('Average temperature by stations')
 
@@ -36,23 +42,30 @@ def buildAvgTemperatureByStation(values):
 
 
 def buildTemperatureByDate(values):
-    station = values[0][1]
+    stationID = values[0][1]
+    stationName = values[0][3]
 
     for value in values:
         temp_by_date.append(value[0])
-        date_value = str(value[2].partition('T')[0])
-        time_value = str(value[2].partition('T')[2])
+        iso_date = datetime.fromisoformat(value[2])
+        date_value = iso_date.strftime("%Y-%m-%d")
+        time_value = iso_date.strftime("%H:%M")
         time.append(time_value)
 
     plt.plot(time, temp_by_date, color='g')
     plt.xlabel('Time')
+    plt.tick_params(
+        axis="x",
+        labelrotation=-60
+    )
     plt.ylabel('Temperature')
-    plt.title('Temperature measured on ' + date_value + ' from station ' + str(station))
+    plt.title('Temperature measured on ' + date_value + ' from station ' + str(stationID) + ' - ' + str(stationName))
     plt.show()
 
 
 def buildWeatherDataOfLastWeeks(values):
-    station = values[0][6]
+    stationID = values[0][6]
+    stationName = values[0][7]
     for value in values:
         date.append(value[0])
         humidity.append(value[1])
@@ -75,5 +88,5 @@ def buildWeatherDataOfLastWeeks(values):
     plt.xlabel('Date')
     plt.xticks(date_labels, date_labels_text)
     plt.ylabel('Weather Data')
-    plt.title('Weather data from station ' + str(station) + ' of the last days')
+    plt.title('Weather data from station ' + str(stationID) + ' - ' + str(stationName) + ' of the last days')
     plt.show()

@@ -62,15 +62,15 @@ def getAvgTemperature(conn):
 
 
 def getTemperaturesByDate(conn, stationID, date):
-    query = "SELECT temperature, stationID, time FROM observation WHERE stationID = ? AND time LIKE (?)"
+    query = "SELECT temperature, observation.stationID, time, station.stationName FROM observation JOIN station on observation.stationID = station.stationID WHERE observation.stationID = ? AND time LIKE (?)"
     with conn:
         cur = conn.cursor()
         cur.execute(query, [stationID, '%' + date + '%'])
     return cur.fetchall()
 
 
-def getWeatherDataOfLastMonths(conn, stationID):
-    query = "SELECT time, AVG(humidity), AVG(precipitation), AVG(pressure), AVG(temperature), AVG(windSpeed), stationID from observation where stationID = ? group by strftime('%d', time)"
+def getAllWeatherData(conn, stationID):
+    query = "SELECT time, AVG(humidity), AVG(precipitation), AVG(pressure), AVG(temperature), AVG(windSpeed), observation.stationID, station.stationName from observation JOIN station on observation.stationID = station.stationID where observation.stationID = ? group by strftime('%d', time)"
     with conn:
         cur = conn.cursor()
         cur.execute(query, [stationID])
